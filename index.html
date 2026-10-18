@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Near Duplicate Document Detection Framework</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Chart.js CDN for live DSA scalability chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Background Glow Accents -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">Simi<span class="gradient-text">Detect</span></span>
+        <span class="badge badge-accent">DSA College Project</span>
+      </div>
+      <div class="nav-links">
+        <a href="#analyzer">Analyzer</a>
+        <a href="#pipeline">Algorithm Pipeline</a>
+        <a href="#minhash">MinHash & LSH</a>
+        <a href="#performance">DSA Advantage</a>
+        <a href="#explorer">Algorithm Explorer</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero / Landing Section -->
+  <header class="hero">
+    <div class="hero-container">
+      <div class="hero-badge">Data Structures & Algorithms Research Framework</div>
+      <h1 class="hero-title">Near Duplicate <span class="gradient-text">Document Detection</span></h1>
+      <p class="hero-subtitle">
+        An efficient, sub-quadratic DSA-based framework for identifying highly similar documents using 
+        <strong>K-Shingling</strong>, <strong>MinHash Permutations</strong>, and <strong>Locality Sensitive Hashing (LSH)</strong>.
+      </p>
+      
+      <div class="hero-tags">
+        <span class="tag">Text Preprocessing</span>
+        <span class="tag">Tokenization</span>
+        <span class="tag">K-Shingling</span>
+        <span class="tag">Rolling Hashing</span>
+        <span class="tag">Jaccard Similarity</span>
+        <span class="tag">MinHash Signature</span>
+        <span class="tag">LSH Banding</span>
+      </div>
+
+      <div class="hero-actions">
+        <a href="#analyzer" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Analyze Documents
+        </a>
+        <a href="#explorer" class="btn btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+          Explore Algorithms
+        </a>
+      </div>
+
+      <!-- Abstract Document Comparison Visualizer -->
+      <div class="hero-art">
+        <div class="art-doc doc-left">
+          <div class="doc-header">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="doc-title">Document_A.txt</span>
+          </div>
+          <div class="doc-lines">
+            <div class="line l1"></div><div class="line l2 highlight"></div><div class="line l3"></div><div class="line l4 highlight"></div><div class="line l5"></div>
+          </div>
+        </div>
+        <div class="art-scanner">
+          <div class="scan-beam"></div>
+          <div class="scan-pulse"></div>
+          <span class="scan-label">MinHash + LSH Bucket Collisions</span>
+        </div>
+        <div class="art-doc doc-right">
+          <div class="doc-header">
+            <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+            <span class="doc-title">Document_B.txt</span>
+          </div>
+          <div class="doc-lines">
+            <div class="line l1"></div><div class="line l2 highlight"></div><div class="line l3 highlight"></div><div class="line l4"></div><div class="line l5"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Document Analyzer -->
+  <section id="analyzer" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Interactive Bench</span>
+        <h2>Document Similarity Analyzer</h2>
+        <p>Input two documents or load benchmark presets to execute the end-to-end DSA pipeline.</p>
+      </div>
+
+      <!-- Presets Toolbar -->
+      <div class="presets-toolbar">
+        <span class="toolbar-label">Load Test Dataset:</span>
+        <button class="btn btn-preset active" onclick="loadPreset('plagiarism')">Plagiarized Article (Near Duplicate)</button>
+        <button class="btn btn-preset" onclick="loadPreset('identical')">Exact Identical Docs</button>
+        <button class="btn btn-preset" onclick="loadPreset('unrelated')">Completely Unrelated Topics</button>
+        <button class="btn btn-preset" onclick="clearInputs()">Clear</button>
+      </div>
+
+      <!-- Configuration Panel -->
+      <div class="config-bar glass-card">
+        <div class="config-item">
+          <label for="shingleK">Shingle Size (k-words):</label>
+          <select id="shingleK" class="select-input">
+            <option value="2">k = 2 (Bi-gram)</option>
+            <option value="3" selected>k = 3 (Tri-gram - Recommended)</option>
+            <option value="4">k = 4 (4-gram)</option>
+            <option value="5">k = 5 (5-gram)</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <label for="numHash">MinHash Functions (m):</label>
+          <select id="numHash" class="select-input">
+            <option value="16">m = 16 hashes</option>
+            <option value="32">m = 32 hashes</option>
+            <option value="64" selected>m = 64 hashes (Standard)</option>
+            <option value="100">m = 100 hashes (High Accuracy)</option>
+          </select>
+        </div>
+        <div class="config-item">
+          <label for="lshBands">LSH Bands (b):</label>
+          <select id="lshBands" class="select-input">
+            <option value="4">b = 4 bands</option>
+            <option value="8">b = 8 bands</option>
+            <option value="16" selected>b = 16 bands (Default)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Text Inputs Grid -->
+      <div class="input-grid">
+        <!-- Document A -->
+        <div class="glass-card doc-input-card">
+          <div class="card-head">
+            <div class="doc-indicator">
+              <span class="indicator-icon a">A</span>
+              <h3>Document A (Reference Source)</h3>
+            </div>
+            <label class="btn btn-upload">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Upload .txt
+              <input type="file" id="fileA" accept=".txt" style="display:none;" onchange="handleFileUpload(event, 'docA')">
+            </label>
+          </div>
+          <textarea id="docA" placeholder="Paste or type Document A text here..." rows="10"></textarea>
+          <div class="doc-stats" id="statsA">
+            <span>Words: <strong id="wordCountA">0</strong></span>
+            <span>Characters: <strong id="charCountA">0</strong></span>
+          </div>
+        </div>
+
+        <!-- Document B -->
+        <div class="glass-card doc-input-card">
+          <div class="card-head">
+            <div class="doc-indicator">
+              <span class="indicator-icon b">B</span>
+              <h3>Document B (Query Target)</h3>
+            </div>
+            <label class="btn btn-upload">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Upload .txt
+              <input type="file" id="fileB" accept=".txt" style="display:none;" onchange="handleFileUpload(event, 'docB')">
+            </label>
+          </div>
+          <textarea id="docB" placeholder="Paste or type Document B text here..." rows="10"></textarea>
+          <div class="doc-stats" id="statsB">
+            <span>Words: <strong id="wordCountB">0</strong></span>
+            <span>Characters: <strong id="charCountB">0</strong></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="cta-center">
+        <button id="runBtn" class="btn btn-glow" onclick="executeFullPipeline()">
+          <span class="btn-spinner" id="btnSpinner"></span>
+          <svg id="btnIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          Run Full Pipeline Analysis
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Step-by-Step Animated Pipeline Track -->
+  <section id="pipeline" class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Algorithm Flow</span>
+        <h2>DSA Execution Pipeline</h2>
+        <p>Interactive tracking of each step from raw text tokenization to candidate bucketing.</p>
+      </div>
+
+      <div class="pipeline-flow">
+        <div class="step-card" id="step-1">
+          <div class="step-num">01</div>
+          <div class="step-icon">📄</div>
+          <h4>Raw Input</h4>
+          <p>Read string streams</p>
+        </div>
+        <div class="pipeline-arrow">➔</div>
+
+        <div class="step-card" id="step-2">
+          <div class="step-num">02</div>
+          <div class="step-icon">🧹</div>
+          <h4>Preprocessing</h4>
+          <p>Regex & Clean lower</p>
+        </div>
+        <div class="pipeline-arrow">➔</div>
+
+        <div class="step-card" id="step-3">
+          <div class="step-num">03</div>
+          <div class="step-icon">✂️</div>
+          <h4>K-Shingling</h4>
+          <p>Extract contiguous n-grams</p>
+        </div>
+        <div class="pipeline-arrow">➔</div>
+
+        <div class="step-card" id="step-4">
+          <div class="step-num">04</div>
+          <div class="step-icon">🔢</div>
+          <h4>Polynomial Hashing</h4>
+          <p>Convert shingles to 32b</p>
+        </div>
+        <div class="pipeline-arrow">➔</div>
+
+        <div class="step-card" id="step-5">
+          <div class="step-num">05</div>
+          <div class="step-icon">🧬</div>
+          <h4>MinHash Signatures</h4>
+          <p>Random permutations</p>
+        </div>
+        <div class="pipeline-arrow">➔</div>
+
+        <div class="step-card" id="step-6">
+          <div class="step-num">06</div>
+          <div class="step-icon">🪣</div>
+          <h4>LSH Banding</h4>
+          <p>Bucket collision test</p>
+        </div>
+        <div class="pipeline-arrow">➔</div>
+
+        <div class="step-card" id="step-7">
+          <div class="step-num">07</div>
+          <div class="step-icon">🎯</div>
+          <h4>Jaccard Decision</h4>
+          <p>Candidate verification</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comprehensive Result Summary Card -->
+  <section class="section" id="resultsSection">
+    <div class="container">
+      <div class="glass-card result-summary-banner">
+        <div class="res-left">
+          <span class="res-sub">VERDICT / STATUS</span>
+          <h2 id="finalVerdictStatus" class="res-verdict">Awaiting Pipeline Run</h2>
+          <p id="finalVerdictDesc">Click "Run Full Pipeline Analysis" above to inspect near-duplicate probability.</p>
+          <div class="res-meta-chips">
+            <span class="meta-chip">Processing Time: <strong id="resProcTime">0.0 ms</strong></span>
+            <span class="meta-chip">LSH Candidate Pair: <strong id="resLshCandidate">Pending</strong></span>
+            <span class="meta-chip">Common Shingles: <strong id="resCommonCount">0</strong></span>
+          </div>
+        </div>
+
+        <div class="res-right">
+          <!-- Circular Progress Meter for Exact Jaccard -->
+          <div class="circle-meter-wrap">
+            <svg class="progress-ring" width="160" height="160">
+              <circle class="progress-ring__circle-bg" stroke="#1f293d" stroke-width="12" fill="transparent" r="68" cx="80" cy="80"/>
+              <circle id="jaccardCircle" class="progress-ring__circle" stroke="#8B5CF6" stroke-width="12" stroke-linecap="round" fill="transparent" r="68" cx="80" cy="80"/>
+            </svg>
+            <div class="circle-label">
+              <span class="circle-pct" id="exactJaccardPct">0.0%</span>
+              <span class="circle-title">Exact Jaccard</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Deep Dive Technical Analytics Sections -->
+  <section class="section">
+    <div class="container">
+      <div class="grid-2col">
+        <!-- 4. Jaccard Similarity Breakdown Card -->
+        <div class="glass-card detail-card">
+          <div class="card-title-bar">
+            <h3>Jaccard Similarity Formula</h3>
+            <span class="math-badge">J(A,B) = |A ∩ B| / |A ∪ B|</span>
+          </div>
+          <div class="set-breakdown">
+            <div class="breakdown-stat">
+              <span class="b-label">Document A Shingles |A|</span>
+              <span class="b-val" id="countA">0</span>
+            </div>
+            <div class="breakdown-stat">
+              <span class="b-label">Document B Shingles |B|</span>
+              <span class="b-val" id="countB">0</span>
+            </div>
+            <div class="breakdown-stat accent-green">
+              <span class="b-label">Intersection |A ∩ B|</span>
+              <span class="b-val" id="intersectionCount">0</span>
+            </div>
+            <div class="breakdown-stat accent-purple">
+              <span class="b-label">Union |A ∪ B|</span>
+              <span class="b-val" id="unionCount">0</span>
+            </div>
+          </div>
+          <div class="classification-box" id="classificationTag">
+            <span class="cls-title">Classification:</span>
+            <span class="cls-badge" id="classBadge">Pending Analysis</span>
+            <p id="classDesc" class="cls-expl">Similarity scale classifies documents from Low (&lt;40%) to Very High (80-100%).</p>
+          </div>
+        </div>
+
+        <!-- 7. MinHash Estimate vs Exact Jaccard -->
+        <div class="glass-card detail-card">
+          <div class="card-title-bar">
+            <h3>MinHash Signature Theorem</h3>
+            <span class="math-badge">Pr[h(A) = h(B)] = J(A,B)</span>
+          </div>
+          <p class="card-subtext">MinHash simulates random permutations to estimate high-dimensional Jaccard similarity in small constant space.</p>
+          <div class="minhash-compare-meters">
+            <div class="meter-item">
+              <div class="meter-info">
+                <span>Exact Jaccard Metric</span>
+                <span id="meterExactText">0.00%</span>
+              </div>
+              <div class="meter-bar-track">
+                <div class="meter-bar-fill bar-purple" id="meterExactFill" style="width: 0%;"></div>
+              </div>
+            </div>
+            <div class="meter-item">
+              <div class="meter-info">
+                <span>MinHash Projected Estimate</span>
+                <span id="meterMinhashText">0.00%</span>
+              </div>
+              <div class="meter-bar-track">
+                <div class="meter-bar-fill bar-blue" id="meterMinhashFill" style="width: 0%;"></div>
+              </div>
+            </div>
+          </div>
+          <div class="error-delta-box">
+            <span>Absolute Approximation Error (|Exact - MinHash|): </span>
+            <strong id="absErrorDelta">0.00%</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Shingling & 6. Hashing Inspectors -->
+      <div class="grid-2col mt-4">
+        <!-- Shingles Visualization -->
+        <div class="glass-card detail-card">
+          <div class="card-title-bar">
+            <h3>K-Shingles Chips (k = <span id="currentKDisplay">3</span>)</h3>
+            <div class="pill-group">
+              <span class="legend-pill green">Common Shingles</span>
+              <span class="legend-pill gray">Unique Shingles</span>
+            </div>
+          </div>
+          <div class="shingle-tabs">
+            <button class="shingle-tab active" onclick="switchShingleView('docA')">Doc A Shingles (<span id="tabCountA">0</span>)</button>
+            <button class="shingle-tab" onclick="switchShingleView('docB')">Doc B Shingles (<span id="tabCountB">0</span>)</button>
+            <button class="shingle-tab" onclick="switchShingleView('common')">Intersecting Only (<span id="tabCountCommon">0</span>)</button>
+          </div>
+          <div class="shingle-chip-container" id="shingleChipsContainer">
+            <div class="empty-state">No shingles generated yet. Click "Run Full Pipeline Analysis".</div>
+          </div>
+        </div>
+
+        <!-- Hashing Table Inspector -->
+        <div class="glass-card detail-card">
+          <div class="card-title-bar">
+            <h3>Polynomial Rolling Hash Table</h3>
+            <span class="table-counter">Showing first 8 hashes</span>
+          </div>
+          <p class="card-subtext">Maps variable-length string n-grams to uniform 32-bit integer space: <code>h = &sum; c[i] &times; 31^(k-1-i) mod 2^32</code></p>
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Shingle (n-gram)</th>
+                  <th>Source</th>
+                  <th>Computed 32b Hash</th>
+                </tr>
+              </thead>
+              <tbody id="hashTableBody">
+                <tr><td colspan="3" class="text-center">Run pipeline to inspect rolling hash table</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. MinHash Signature Vector Inspector -->
+      <div class="glass-card mt-4" id="minhash">
+        <div class="card-title-bar">
+          <h3>MinHash Signature Vectors (Document Representation Matrix)</h3>
+          <span class="badge badge-accent" id="hashFunctionsBadge">64 Universal Hash Permutations</span>
+        </div>
+        <p class="card-subtext">Universal hash functions applied: <code>h_i(x) = (a_i &times; x + b_i) mod P</code>. The document signature stores the minimum hash encountered across all shingles.</p>
+        
+        <div class="signature-matrix-wrap">
+          <table class="matrix-table">
+            <thead>
+              <tr id="matrixHeaderRow">
+                <th>Doc \ Hash Func</th>
+                <!-- dynamically populated -->
+              </tr>
+            </thead>
+            <tbody id="matrixBody">
+              <tr><td colspan="12" class="text-center">MinHash signatures will be displayed after execution.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 8. LSH (Locality Sensitive Hashing) Section -->
+      <div class="glass-card mt-4">
+        <div class="card-title-bar">
+          <h3>Locality Sensitive Hashing (LSH) Banding Visualization</h3>
+          <span class="math-badge" id="lshParamsBadge">b = 16 bands, r = 4 rows/band</span>
+        </div>
+        <p class="card-subtext">
+          Signatures are divided into <strong>b</strong> bands of <strong>r</strong> rows. If any band matches identically, documents hash to the same bucket and become a <strong>Candidate Pair</strong>, bypassing $O(n^2)$ full comparisons!
+        </p>
+
+        <div class="lsh-bands-grid" id="lshBandsGrid">
+          <div class="empty-state">LSH bands will be evaluated upon analysis.</div>
+        </div>
+
+        <div class="lsh-verdict-box" id="lshVerdictBox">
+          <div class="lsh-status-indicator" id="lshStatusDot"></div>
+          <div>
+            <strong id="lshCandidateTitle">LSH Collision Evaluation</strong>
+            <p id="lshCandidateDesc">Run analysis to see if Document A and B collide in at least one band.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Performance / DSA Advantage Section -->
+  <section class="section" id="performance">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Big-O Complexity & Scalability</span>
+        <h2>Why DSA Matters: Brute Force vs. MinHash + LSH</h2>
+        <p>Demonstrating how Locality Sensitive Hashing prevents catastrophic $O(n^2)$ bottlenecks on large document corpuses.</p>
+      </div>
+
+      <div class="grid-2col">
+        <div class="glass-card">
+          <h3 class="gradient-text">Algorithmic Complexity Contrast</h3>
+          <div class="complexity-comparison-table mt-3">
+            <div class="cmp-row">
+              <span class="cmp-dim">Metric</span>
+              <span class="cmp-traditional">Traditional Brute Force</span>
+              <span class="cmp-lsh">MinHash + LSH Framework</span>
+            </div>
+            <div class="cmp-row">
+              <span class="cmp-dim">Pairwise Comparisons</span>
+              <span class="cmp-bad">O(n²)</span>
+              <span class="cmp-good">O(n) candidates</span>
+            </div>
+            <div class="cmp-row">
+              <span class="cmp-dim">Corpus of 100k Docs</span>
+              <span class="cmp-bad">~5,000,000,000 pairs</span>
+              <span class="cmp-good">&lt; 20,000 candidate checks</span>
+            </div>
+            <div class="cmp-row">
+              <span class="cmp-dim">Space per Document</span>
+              <span class="cmp-bad">O(|Doc|) Raw Text</span>
+              <span class="cmp-good">O(m) Constant Signature</span>
+            </div>
+            <div class="cmp-row">
+              <span class="cmp-dim">Query New Document</span>
+              <span class="cmp-bad">Compare with all N</span>
+              <span class="cmp-good">Hash into b buckets: O(1)</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card chart-card">
+          <h3>Operations Scaling Chart (Log Scale)</h3>
+          <div class="chart-container">
+            <canvas id="scalabilityChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. Algorithm Explorer Modal / Deep-Dive Section -->
+  <section class="section" id="explorer">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">DSA Theory & Curated Notes</span>
+        <h2>Algorithm Explorer</h2>
+        <p>Interactive knowledge cards explaining the underlying algorithms used in this project.</p>
+      </div>
+
+      <div class="algo-grid">
+        <div class="glass-card algo-card" onclick="openAlgoModal('preprocessing')">
+          <div class="algo-icon">🧹</div>
+          <h4>1. Preprocessing & Normalization</h4>
+          <p>Converts unstructured strings into regularized tokens by stripping noise, non-alphanumeric punctuation, and lowercasing.</p>
+          <span class="algo-link">Read DSA Breakdown →</span>
+        </div>
+
+        <div class="glass-card algo-card" onclick="openAlgoModal('shingling')">
+          <div class="algo-icon">✂️</div>
+          <h4>2. K-Shingling (n-grams)</h4>
+          <p>Transforms sequential text documents into mathematical sets of contiguous word sequences to capture local phrasing.</p>
+          <span class="algo-link">Read DSA Breakdown →</span>
+        </div>
+
+        <div class="glass-card algo-card" onclick="openAlgoModal('hashing')">
+          <div class="algo-icon">🔢</div>
+          <h4>3. Polynomial Rolling Hashing</h4>
+          <p>Maps high-dimensional variable-length string tokens to fixed 32-bit integer indices using Horner's polynomial rule.</p>
+          <span class="algo-link">Read DSA Breakdown →</span>
+        </div>
+
+        <div class="glass-card algo-card" onclick="openAlgoModal('jaccard')">
+          <div class="algo-icon">📊</div>
+          <h4>4. Jaccard Similarity</h4>
+          <p>Measures the exact overlap ratio between two distinct sets: the cardinality of their intersection divided by their union.</p>
+          <span class="algo-link">Read DSA Breakdown →</span>
+        </div>
+
+        <div class="glass-card algo-card" onclick="openAlgoModal('minhash')">
+          <div class="algo-icon">🧬</div>
+          <h4>5. MinHash Signatures</h4>
+          <p>Generates compact signature vectors of size $m$ whose collision probability mathematically equals the exact Jaccard similarity.</p>
+          <span class="algo-link">Read DSA Breakdown →</span>
+        </div>
+
+        <div class="glass-card algo-card" onclick="openAlgoModal('lsh')">
+          <div class="algo-icon">🪣</div>
+          <h4>6. Locality Sensitive Hashing (LSH)</h4>
+          <p>Slices signature vectors into bands and hashes rows to buckets, providing sub-quadratic candidate generation.</p>
+          <span class="algo-link">Read DSA Breakdown →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Interactive Modal for Algorithms -->
+  <div class="modal-backdrop" id="algoModal" onclick="closeAlgoModal(event)">
+    <div class="modal-content glass-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeAlgoModal()">&times;</button>
+      <div id="modalBody">
+        <!-- Dynamically injected via script.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>Near Duplicate Document Detection Framework &bull; Final Year College DSA Project</p>
+      <p class="footer-sub">Engineered with HTML5, CSS3, & Vanilla JavaScript (No React, Node.js or Server dependencies needed)</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
